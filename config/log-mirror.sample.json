@@ -1,0 +1,84 @@
+{
+  "servers": [
+    {
+      "id": "web-server-01",
+      "name": "Web Server 01",
+      "host": "web01.example.com",
+      "port": 22,
+      "username": "sysadmin",
+      "authenticationType": "PASSWORD",
+      "password": "${SSH_PASSWORD_WEB01}",
+      "privateKeyFile": null,
+      "passphrase": null
+    },
+    {
+      "id": "app-server-01",
+      "name": "App Server 01",
+      "host": "app01.example.com",
+      "port": 22,
+      "username": "ubuntu",
+      "authenticationType": "PRIVATE_KEY",
+      "password": null,
+      "privateKeyFile": "${PRIVATE_KEY_PATH}",
+      "passphrase": "${KEY_PASSPHRASE}"
+    }
+  ],
+  "logs": [
+    {
+      "id": "web-access-logs",
+      "serverId": "web-server-01",
+      "sourcePath": "/var/log/nginx/access.log",
+      "localMirrorPath": "/data/mirrors/web-access.log",
+      "enabled": true,
+      "rotationPolicy": {
+        "type": "SIZE",
+        "maxSizeMB": 500,
+        "gzipCompressed": true
+      },
+      "retentionPolicy": {
+        "type": "AGE",
+        "maxAgeDays": 30
+      },
+      "processors": [
+        {
+          "id": "errorFilter",
+          "type": "SHELL_COMMAND",
+          "command": "grep -v 'HTTP/1.1 2'",
+          "parameters": {}
+        }
+      ]
+    },
+    {
+      "id": "app-error-logs",
+      "serverId": "app-server-01",
+      "sourcePath": "/var/log/application/error.log",
+      "localMirrorPath": "/data/mirrors/app-error.log",
+      "enabled": true,
+      "rotationPolicy": {
+        "type": "SIZE",
+        "maxSizeMB": 200,
+        "gzipCompressed": false
+      },
+      "retentionPolicy": {
+        "type": "COUNT",
+        "maxFiles": 100
+      },
+      "processors": [
+        {
+          "id": "passwordMasker",
+          "type": "JAVA_CLASS",
+          "className": "com.example.logmirror.processor.example.PasswordMaskingProcessor",
+          "parameters": {}
+        }
+      ]
+    }
+  ],
+  "security": {
+    "allowShellProcessors": true,
+    "allowedCommandPrefixes": [
+      "/bin/",
+      "/usr/bin/",
+      "/opt/log-processors/"
+    ]
+  }
+}
