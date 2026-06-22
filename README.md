@@ -759,17 +759,6 @@ Combine text and event processors for efficient processing:
 5. Event → `EventValidator` → validates and ensures quality
 6. Final event written to mirror file
 
-## Processor Architecture
-
-For detailed information about the processor architecture, including design patterns, performance considerations, and advanced use cases, see [PROCESSOR_ARCHITECTURE.md](PROCESSOR_ARCHITECTURE.md).
-
-**Key Highlights:**
-- Two-tier architecture: Text processors → Event processors
-- Text processors for efficient plain text filtering with Unix tools
-- Event processors for structured enrichment and transformation
-- Pipeline execution with metadata access and event manipulation
-- Support for dropping, transforming, and duplicating events
-
 ## Building and Running
 
 ### Prerequisites
